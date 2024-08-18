@@ -97,9 +97,61 @@ void CryptSafe::decrypt_key_asymm(const std::string& file_path, const std::strin
 }
 
 void CryptSafe::encrypt_file_symm(const std::string& file_path, const std::string& key_path) {
-    return;
+    using namespace CryptoPP;
+
+    // Load the AES key from the key file
+    SecByteBlock key(AES::DEFAULT_KEYLENGTH);
+    FileSource keyFile(key_path.c_str(), true);
+    keyFile.Get(key, key.size());
+
+    // Generate a random IV
+    AutoSeededRandomPool rng;
+    byte iv[AES::BLOCKSIZE];
+    rng.GenerateBlock(iv, sizeof(iv));
+
+    // Set up AES encryption in CBC mode
+    CBC_Mode<AES>::Encryption encryption;
+    encryption.SetKeyWithIV(key, key.size(), iv);
+
+    // Encrypt the file
+    std::string encrypted_file_path = file_path + ".enc";
+    FileSource fs(file_path.c_str(), true,
+        new StreamTransformationFilter(encryption,
+            new FileSink(encrypted_file_path.c_str())
+        )
+    );
+
+    // Save the IV to a separate file
+    std::string iv_file_path = file_path + ".iv";
+    FileSink ivFile(iv_file_path.c_str());
+    ivFile.Put(iv, sizeof(iv));
 }
 
 void CryptSafe::decrypt_file_symm(const std::string& file_path, const std::string& key_path) {
-    return;
-} // namespace cryptsafe
+    using namespace CryptoPP;
+
+    // Load the AES key from the key file
+    SecByteBlock key(AES::DEFAULT_KEYLENGTH);
+    FileSource keyFile(key_path.c_str(), true);
+    keyFile.Get(key, key.size());
+
+    // Load the IV from the corresponding .iv file
+    std::string iv_file_path = file_path.substr(0, file_path.find_last_of('.')) + ".iv";
+    byte iv[AES::BLOCKSIZE];
+    FileSource ivFile(iv_file_path.c_str(), true);
+    ivFile.Get(iv, sizeof(iv));
+
+    // Set up AES decryption in CBC mode
+    CBC_Mode<AES>::Decryption decryption;
+    decryption.SetKeyWithIV(key, key.size(), iv);
+
+    // Decrypt the file
+    std::string decrypted_file_path = file_path.substr(0, file_path.find_last_of('.')) + ".dec";
+    FileSource fs(file_path.c_str(), true,
+        new StreamTransformationFilter(decryption,
+            new FileSink(decrypted_file_path.c_str())
+        )
+    );
+}
+
+}

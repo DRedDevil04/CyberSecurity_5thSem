@@ -14,10 +14,10 @@ int main() {
     cryptSafe.decrypt_key_asymm("symmetric.key.enc","private.key");
 
     // // Encrypt a file using the symmetric key
-    // cryptSafe.encrypt_file_symm("example.txt","symmetric.key");
+    cryptSafe.encrypt_file_symm("darth.jpeg","symmetric.key");
 
     // // Decrypt the file using the symmetric key
-    // cryptSafe.decrypt_file_symm("example.txt.enc","symmetric.key");
+    cryptSafe.decrypt_file_symm("darth.jpeg.enc","symmetric.key.enc.dec");
 
     std::cout << "Encryption and decryption completed successfully." << std::endl;
 
