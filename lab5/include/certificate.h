@@ -13,8 +13,8 @@ class Data {
 public:
     std::string subjectName;
     std::string issuerName;
-    time_t notBefore;
-    time_t notAfter;
+    std::string notBefore;
+    std::string notAfter;
     std::string publicKey;
 };
 
@@ -27,10 +27,10 @@ public:
     // Wrapper methods for Data's methods
     void SetIssuerDistinguishedName(const std::string& issuer);
     void SetSubjectDistinguishedName(const std::string& subject);
-    void SetNotBefore(time_t notBeforeTime);
-    void SetNotAfter(time_t notAfterTime);
+    void SetNotBefore(std::string notBeforeTime);
+    void SetNotAfter(std::string notAfterTime);
     void SetSubjectPublicKey(const CryptoPP::RSA::PublicKey& key);
-    void certificateSign(const std::string certificate,const std::string privkeyCA);
+    void certificateSign(const std::string certificate,const std::string privkeyCA, std::string notbefore, std::string notafter,std::string issuer, std:: string email);
     bool verify(const std::string certificate,const std::string& pub_key);
     // Serialization and Deserialization methods
     std::string Serialize() const;

@@ -39,11 +39,11 @@ void Certificate::SetSubjectDistinguishedName(const std::string& subject) {
     data.subjectName=subject;
 }
 
-void Certificate::SetNotBefore(time_t notBeforeTime) {
+void Certificate::SetNotBefore(std::string notBeforeTime) {
     data.notBefore = notBeforeTime;
 }
 
-void Certificate::SetNotAfter(time_t notAfterTime) {
+void Certificate::SetNotAfter(std::string notAfterTime) {
     data.notAfter = notAfterTime;
 }
 
@@ -58,8 +58,8 @@ std::string Certificate::Serialize() const {
 
     j["subjectName"] = data.subjectName;
     j["issuerName"] = data.issuerName;
-    j["notBefore"] = static_cast<uint64_t>(data.notBefore);
-    j["notAfter"] = static_cast<uint64_t>(data.notAfter);
+    j["notBefore"] = data.notBefore;
+    j["notAfter"] = data.notAfter;
     j["publicKey"] = data.publicKey;
     j["signatureAlgo"] = signatureAlgo;
     j["signature"] = std::string(signature.begin(), signature.end());
@@ -71,8 +71,8 @@ std::string Certificate::SerializeData() const {
     nlohmann::json j;
     j["subjectName"] = data.subjectName;
     j["issuerName"] = data.issuerName;
-    j["notBefore"] = static_cast<uint64_t>(data.notBefore);
-    j["notAfter"] = static_cast<uint64_t>(data.notAfter);
+    j["notBefore"] = data.notBefore;
+    j["notAfter"] = data.notAfter;
     j["publicKey"] = data.publicKey;
     
     return j.dump(); // Convert JSON object to string
@@ -93,7 +93,7 @@ Certificate Certificate::Deserialize(const std::string& jsonString) {
 
     return cert;
 }
-void Certificate::certificateSign(const std::string cert_file,const std::string privkeyCA){
+void Certificate::certificateSign(const std::string cert_file,const std::string privkeyCA, std::string notbefore, std:: string notafter, std::string issuer, std:: string email){
    using namespace CryptoPP;
 
         // Load the CA's private key from the file
@@ -104,7 +104,12 @@ void Certificate::certificateSign(const std::string cert_file,const std::string 
         } catch (const CryptoPP::Exception& e) {
             throw std::runtime_error("Failed to load CA private key: " + std::string(e.what()));
         }
-
+        
+        this->data.issuerName=issuer;
+        this->data.subjectName=email;
+        this->data.notBefore=notbefore;
+        this->data.notAfter=notafter;
+        
         // Serialize the certificate data for signing
         std::string dataToSign = this->SerializeData();
         
