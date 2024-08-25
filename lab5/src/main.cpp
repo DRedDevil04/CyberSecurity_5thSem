@@ -1,25 +1,24 @@
-#include "crypt_safe.h"
+#include "certificate.h"
+#include "certify_me.h"
 #include <iostream>
 
 int main() {
-    cryptsafe::CryptSafe cryptSafe;
-
+    certifyme::CertifyMe certifyMe;
+    Certificate cert;
     // Generate a symmetric key and save it to a file
-    cryptSafe.generate_key("symmetric.key");
-    cryptSafe.generate_keys_asymm("private.key","public.key");
-    // Encrypt the symmetric key using an asymmetric public key
-    cryptSafe.encrypt_key_asymm("symmetric.key","public.key");
+    certifyMe.generate_CA_pub_priv_key("CA");
+    certifyMe.generate_CA_pub_priv_key("Fake_CA");
+    certifyMe.generate_user_pub_priv_key("devam");
 
-    // Decrypt the symmetric key using an asymmetric private key
-    cryptSafe.decrypt_key_asymm("symmetric.key.enc","private.key");
-
-    // // Encrypt a file using the symmetric key
-    cryptSafe.encrypt_file_symm("darth.jpeg","symmetric.key");
-
-    // // Decrypt the file using the symmetric key
-    cryptSafe.decrypt_file_symm("darth.jpeg.enc","symmetric.key.enc.dec");
-
-    std::cout << "Encryption and decryption completed successfully." << std::endl;
+    cert.SetIssuerDistinguishedName("iiita");
+    cert.SetSubjectDistinguishedName("devamydesai@gmail.com");
+    
+    cert.certificateSign("devam.cert","CA_priv.key");
+    if(cert.verify("devam.cert","Fake_CA_pub.key")){
+        std::cout<<"YES"<<std::endl;
+    }
+    else std::cout<<"NO"<<std::endl;
+    std::cout << "PKI Exited" << std::endl;
 
     return 0;
 }

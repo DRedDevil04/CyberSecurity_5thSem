@@ -2,32 +2,35 @@
 CXX = clang++
 
 # Compiler flags
-CXXFLAGS = -Wall -Wextra
+CXXFLAGS = -Wall -Wextra -std=c++11
 
 # Include directories
-INCLUDES = -I/opt/homebrew/Cellar/cryptopp/8.9.0/include/ -I./include/
+INCLUDES = -I/opt/homebrew/Cellar/cryptopp/8.9.0/include/ -I./include/ -I/opt/homebrew/Cellar/nlohmann-json/3.11.3/include/
 
 # Source files
-SRCS = ./src/main.cpp ./src/crypt_safe.cpp
+SRCS = ./src/main.cpp ./src/certify_me.cpp ./src/certificate.cpp
 
 # Header files
-HDRS = ./include/crypt_safe.h
+HDRS = ./include/certify_me.h ./include/certificate.h
 
-OBJS = /opt/homebrew/Cellar/cryptopp/8.9.0/lib/libcryptopp.a ./build/main.o ./build/crypt_safe.o
+OBJS = /opt/homebrew/Cellar/cryptopp/8.9.0/lib/libcryptopp.a ./build/main.o ./build/certify_me.o ./build/certificate.o
 
 # Executable name
-TARGET = cryptsafe
+TARGET = certify_me
 
 # Default target
 all: $(TARGET)
 
 # Link object files to create the executable
-$(TARGET): make_crypt_safe make_main
+$(TARGET): make_certificate make_certify make_main
 	$(CXX) $(CXXFLAGS) $(OBJS) -o app $(INCLUDES) 
 
 # Compile source files into object files
-make_crypt_safe:	
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o ./build/crypt_safe.o ./src/crypt_safe.cpp
+make_certify:	
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o ./build/certify_me.o ./src/certify_me.cpp
+
+make_certificate:
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o ./build/certificate.o ./src/certificate.cpp
 
 make_main:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o ./build/main.o ./src/main.cpp

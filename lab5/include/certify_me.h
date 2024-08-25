@@ -23,11 +23,8 @@ public:
     ~CertifyMe();
 
     // Member functions
-    void generate_CA_pub_priv_key(std::string& file_name);
-    void generate_user_pub_priv_key(std::string& file_name);
-    void generate_cert(const std::string& file_name);
-    void sign_cert(const std::string& file_name,const std::string& priv_key_CA);
-    void verify_signature(const std::string& file_name, const std::string& pub_key_CA);
+    void generate_CA_pub_priv_key(std::string file_name);
+    void generate_user_pub_priv_key(std::string file_name);
 };
 
 } // namespace cryptsafe
