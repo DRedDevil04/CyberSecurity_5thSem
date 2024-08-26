@@ -36,6 +36,10 @@
 *.x86_64
 *.hex
 
+# certs and keys
+*.cert
+*.key
+
 # Debug files
 *.dSYM/
 *.su
