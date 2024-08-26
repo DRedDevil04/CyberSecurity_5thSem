@@ -12,6 +12,8 @@
 #include <cryptopp/rsa.h>
 #include <cryptopp/secblock.h>
 #include <cryptopp/dsa.h>
+#include <date/date.h>
+#include <chrono>
 // Convert CryptoPP::RSA::PublicKey to a string
 std::string PublicKeyToBase64(const CryptoPP::RSA::PublicKey& publicKey)  {
     std::string publicKeyStr;
@@ -158,6 +160,7 @@ bool Certificate::verify(const std::string certificate_file,const std::string &p
     using namespace CryptoPP;
 
     try {
+
         // Load the public key from a file
         DSA::PublicKey publicKey;
         FileSource pubFile(pub_key_filename.c_str(), true /*pumpAll*/);
@@ -168,6 +171,25 @@ bool Certificate::verify(const std::string certificate_file,const std::string &p
         CryptoPP::FileSource file(certificate_file.c_str(),true,new CryptoPP::StringSink(jsonData));
         Certificate cert;
         cert=cert.Deserialize(jsonData);
+
+        // Checking Certificate expiry
+        std::string notAfterStr=cert.data.notAfter;
+        std::cout<<this->data.notAfter<<std::endl;
+        std::istringstream in1(notAfterStr);
+        std::istringstream iss(notAfterStr);
+        date::sys_days expirationDate;
+        iss >> date::parse("%F", expirationDate);
+
+        // Get the current date
+        auto currentDate = date::floor<date::days>(std::chrono::system_clock::now());
+
+        if(currentDate>expirationDate){
+            std::cout<<"Certificate Expired"<<std::endl;
+            return false;
+        }
+        
+        // Decode the Base64 signature
+
         std::string decodedSignature;
         StringSource(cert.signature, true, new Base64Decoder(new StringSink(decodedSignature)));
         std::string dataToBeVerified=cert.SerializeData();
@@ -181,7 +203,6 @@ bool Certificate::verify(const std::string certificate_file,const std::string &p
             (const byte*)decodedSignature.data(),
             decodedSignature.size()
         );
-
         return result;
     } catch (const CryptoPP::Exception& e) {
         std::cerr << "Verification error: " << e.what() << std::endl;

@@ -56,8 +56,8 @@ generate_user_keys() {
 sign_certificate() {
     read -p $'\033[1;33mEnter the path to the certificate file: \033[0m' cert_file
     read -p $'\033[1;33mEnter the path to the CA private key: \033[0m' ca_key
-    read -p $'\033[1;33mEnter the notbefore: \033[0m' notbefore
-    read -p $'\033[1;33mEnter the notafter: \033[0m' notafter
+    read -p $'\033[1;33mEnter the notbefore (yyyy-mm-dd): \033[0m' notbefore
+    read -p $'\033[1;33mEnter the notafter (yyyy-mm-dd): \033[0m' notafter
     read -p $'\033[1;33mEnter the issuer name: \033[0m' issuer
     read -p $'\033[1;33mEnter your email : \033[0m' email
     ./app 3 "$cert_file" "$ca_key" "$notbefore" "$notafter" "$issuer" "$email"
