@@ -60,7 +60,8 @@ sign_certificate() {
     read -p $'\033[1;33mEnter the notafter (yyyy-mm-dd): \033[0m' notafter
     read -p $'\033[1;33mEnter the issuer name: \033[0m' issuer
     read -p $'\033[1;33mEnter your email : \033[0m' email
-    ./app 3 "$cert_file" "$ca_key" "$notbefore" "$notafter" "$issuer" "$email"
+    read -p $'\033[1;33mEnter your Public Key file path : \033[0m' pubkey
+    ./app 3 "$cert_file" "$ca_key" "$notbefore" "$notafter" "$issuer" "$email" "$pubkey"
     echo -e "\033[1;32mCertificate signed successfully!\033[0m"
 }
 
@@ -69,7 +70,6 @@ verify_certificate() {
     read -p $'\033[1;33mEnter the path to the certificate file: \033[0m' cert_file
     read -p $'\033[1;33mEnter the path to the CA public key: \033[0m' ca_pub_key
     ./app 4 "$cert_file" "$ca_pub_key"
-    echo -e "\033[1;32mCertificate verification completed!\033[0m"
 }
 
 # Main loop

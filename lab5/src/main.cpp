@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
             break;
 
         case 3:  // Sign Certificate
-            if (argc != 8) {
+            if (argc != 9) {
                 print_usage();
                 return 1;
             } else {
@@ -58,8 +58,9 @@ int main(int argc, char* argv[]) {
                 std::string notafter = argv[5];
                 std::string issuer = argv[6];
                 std::string email = argv[7];
+                std::string pubkey= argv[8];
                 Certificate cert;  // Assuming default constructor
-                cert.certificateSign(cert_file, ca_priv_key_file, notbefore, notafter,issuer, email);
+                cert.certificateSign(cert_file, ca_priv_key_file, notbefore, notafter,issuer, email, pubkey);
                 std::cout << "Certificate signed successfully.\n";
             }
             break;

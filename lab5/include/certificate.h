@@ -30,7 +30,7 @@ public:
     void SetNotBefore(std::string notBeforeTime);
     void SetNotAfter(std::string notAfterTime);
     void SetSubjectPublicKey(const CryptoPP::RSA::PublicKey& key);
-    void certificateSign(const std::string certificate,const std::string privkeyCA, std::string notbefore, std::string notafter,std::string issuer, std:: string email);
+    void certificateSign(const std::string certificate,const std::string privkeyCA, std::string notbefore, std::string notafter,std::string issuer, std:: string email, std:: string pubkey);
     bool verify(const std::string certificate,const std::string& pub_key);
     // Serialization and Deserialization methods
     std::string Serialize() const;

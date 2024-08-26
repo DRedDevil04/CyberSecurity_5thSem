@@ -31,6 +31,28 @@ std::string PublicKeyToBase64(const CryptoPP::RSA::PublicKey& publicKey)  {
     return encoded;
 }
 
+std::string LoadPublicKeyAndConvertToBase64(const std::string& filename) {
+    using namespace CryptoPP;
+
+    // Load the public key from the file
+    RSA::PublicKey publicKey;
+    FileSource file(filename.c_str(), true /*pumpAll*/);
+    publicKey.Load(file);
+
+    // Save the public key to a string
+    std::string publicKeyStr;
+    StringSink stringSink(publicKeyStr);
+    publicKey.Save(stringSink);
+
+    // Encode the binary key to Base64
+    std::string encoded;
+    Base64Encoder encoder(new StringSink(encoded), false /*do not insert line breaks*/);
+    encoder.Put(reinterpret_cast<const byte*>(publicKeyStr.data()), publicKeyStr.size());
+    encoder.MessageEnd();
+
+    return encoded;
+}
+
 
 // Wrapper method implementations for the Certificate class
 void Certificate::SetIssuerDistinguishedName(const std::string& issuer) {
@@ -95,7 +117,7 @@ Certificate Certificate::Deserialize(const std::string& jsonString) {
 
     return cert;
 }
-void Certificate::certificateSign(const std::string cert_file,const std::string privkeyCA, std::string notbefore, std:: string notafter, std::string issuer, std:: string email){
+void Certificate::certificateSign(const std::string cert_file,const std::string privkeyCA, std::string notbefore, std:: string notafter, std::string issuer, std:: string email, std:: string pubkey){
    using namespace CryptoPP;
 
         // Load the CA's private key from the file
@@ -107,10 +129,13 @@ void Certificate::certificateSign(const std::string cert_file,const std::string 
             throw std::runtime_error("Failed to load CA private key: " + std::string(e.what()));
         }
         
+        std::string user_public_key=LoadPublicKeyAndConvertToBase64(pubkey);
+
         this->data.issuerName=issuer;
         this->data.subjectName=email;
         this->data.notBefore=notbefore;
         this->data.notAfter=notafter;
+        this->data.publicKey=user_public_key;
         
         // Serialize the certificate data for signing
         std::string dataToSign = this->SerializeData();
