@@ -1,6 +1,3 @@
-Here's a draft README file for your GitHub repository:
-
----
 
 # Cyber Security 5th Semester Lab Assignments
 
@@ -104,8 +101,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 - [Crypto++](https://cryptopp.com/)
-- [PyCryptodome](https://pycryptodome.readthedocs.io/)
-- [OpenSSL](https://www.openssl.org/)
+- 
 
 ---
 
