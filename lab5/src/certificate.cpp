@@ -35,21 +35,38 @@ std::string LoadPublicKeyAndConvertToBase64(const std::string& filename) {
     using namespace CryptoPP;
 
     // Load the public key from the file
-    RSA::PublicKey publicKey;
-    FileSource file(filename.c_str(), true /*pumpAll*/);
-    publicKey.Load(file);
+    // RSA::PublicKey publicKey;
+    // FileSource file(filename.c_str(), true /*pumpAll*/);
+    // publicKey.Load(file);
 
-    // Save the public key to a string
-    std::string publicKeyStr;
-    StringSink stringSink(publicKeyStr);
-    publicKey.Save(stringSink);
+    // // Save the public key to a string
+    // std::string publicKeyStr;
+    // StringSink stringSink(publicKeyStr);
+    // publicKey.Save(stringSink);
 
-    // Encode the binary key to Base64
+    // // Encode the binary key to Base64
+    // std::string encoded;
+    // Base64Encoder encoder(new StringSink(encoded), false /*do not insert line breaks*/);
+    // encoder.Put(reinterpret_cast<const byte*>(publicKeyStr.data()), publicKeyStr.size());
+    // encoder.MessageEnd();
+
+    // return encoded;
+    
+    FileSource file(filename.c_str(), true /* binary mode */);
+    Integer pubkey;
+    pubkey.BERDecode(file);
     std::string encoded;
-    Base64Encoder encoder(new StringSink(encoded), false /*do not insert line breaks*/);
-    encoder.Put(reinterpret_cast<const byte*>(publicKeyStr.data()), publicKeyStr.size());
-    encoder.MessageEnd();
-
+    
+    // Encode the integer using BER encoding
+    std::string berEncoded;
+    CryptoPP::StringSink stringSink(berEncoded);
+    pubkey.BEREncode(stringSink);
+    
+    // Encode the BER-encoded data to Base64
+    CryptoPP::Base64Encoder base64Encoder(new CryptoPP::StringSink(encoded), false /* no line breaks */);
+    base64Encoder.Put(reinterpret_cast<const CryptoPP::byte*>(berEncoded.data()), berEncoded.size());
+    base64Encoder.MessageEnd();
+    
     return encoded;
 }
 
